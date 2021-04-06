@@ -1,0 +1,62 @@
+load("IDCSCmatrix.Rda")
+load("IDCSCmeta.Rda")
+rownames(matrix3)<-matrix3$circRNA
+matrix3$circRNA<-NULL
+quantile(rowSums(as.matrix(matrix3[1:584])> 0),0.6)
+quantile(rowSums(as.matrix(matrix3[1:584])> 0),0.7)
+quantile(rowSums(as.matrix(matrix3[1:584])> 0),0.8)
+quantile(rowSums(as.matrix(matrix3[1:584])> 0),0.9)
+matrix3q<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=1&rowSums(as.matrix(matrix3)> 0)<2),]
+matrix3q6<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=2&rowSums(as.matrix(matrix3)> 0)<4),]
+matrix3q7<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=4&rowSums(as.matrix(matrix3)> 0)<7),]
+matrix3q8<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=7&rowSums(as.matrix(matrix3)> 0)<20),]
+matrix3q9<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=20),]
+dat<-matrix3q9 #according to which quantile to be investigated
+###############################################################
+###t-SNE
+library(Rtsne)
+tsne<-as.data.frame(t(dat))
+tsne<-unique(tsne)
+set.seed(42) 
+sne_out1 <- Rtsne(as.matrix(tsne), dims=3, pca =T, perplexity = 50, max_iter = 500)
+sne_out2 <- Rtsne(as.matrix(tsne), dims=3, pca =T, perplexity = 100, max_iter = 500)
+sne_out3 <- Rtsne(as.matrix(tsne), dims=3, pca =T, perplexity = 5, max_iter = 500)
+sne_out4 <- Rtsne(as.matrix(tsne), dims=3, pca =T, perplexity = 10, max_iter = 500)
+sne_out5 <- Rtsne(as.matrix(tsne), dims=3, pca =T, perplexity = 25 , max_iter = 500)
+samples<-as.data.frame(rownames(tsne))
+colnames(samples)<-"Samples"
+meta5<-merge(samples,meta4,all=F)
+color1<-gsub("cancer","tomato",meta5$Type)   
+color1<-gsub("normal","dodgerblue",color1)   
+color2<-rainbow(length(meta5$Site))
+library(scatterplot3d)
+pdf("tsne50cannor.pdf")
+scatterplot3d(sne_out1$Y,color=color1,pch=16)
+dev.off()
+pdf("tsne50site.pdf")
+scatterplot3d(sne_out1$Y,color=color2,pch=16)
+dev.off()
+pdf("tsne100cannor.pdf")
+scatterplot3d(sne_out2$Y,color=color1,pch=16)
+dev.off()
+pdf("tsne100site.pdf")
+scatterplot3d(sne_out2$Y,color=color2,pch=16)
+dev.off()
+pdf("tsne5cannor.pdf")
+scatterplot3d(sne_out3$Y,color=color1,pch=16)
+dev.off()
+pdf("tsne5site.pdf")
+scatterplot3d(sne_out3$Y,color=color2,pch=16)
+dev.off()
+pdf("tsne10cannor.pdf")
+scatterplot3d(sne_out4$Y,color=color1,pch=16)
+dev.off()
+pdf("tsne10site.pdf")
+scatterplot3d(sne_out4$Y,color=color2,pch=16)
+dev.off()
+pdf("tsne25cannor.pdf")
+scatterplot3d(sne_out5$Y,color=color1,pch=16)
+dev.off()
+pdf("tsne25site.pdf")
+scatterplot3d(sne_out5$Y,color=color2,pch=16)
+dev.off()
