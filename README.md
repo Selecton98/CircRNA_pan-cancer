@@ -1,7 +1,6 @@
 # CircRNA_pan-cancer
 Data and codes for article entitled 'Pan-cancer Analysis Identifies Cancer Tissue-enriched CircRNAs Associated with Cancer Mutations as Exosomal Biomarkers'.
 
-> sessionInfo()
 R version 3.6.0 (2019-04-26)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows >= 8 x64 (build 9200)
