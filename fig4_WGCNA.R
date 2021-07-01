@@ -131,7 +131,7 @@ labeledHeatmap(Matrix = modTraitCor, xLabels = colnames(datTraits),
                cex.text = 0.3, zlim = c(-1,1),
                main = paste("Module-trait relationships"))
 dev.off()
-#################################################
+############################################################
 ###loading output of WGCNA
 node3q7<-read.table("./matrix3q7/nodes.txt",sep="\t",header=T)
 node3q8<-read.table("./matrix3q8/nodes.txt",sep="\t",header=T)
