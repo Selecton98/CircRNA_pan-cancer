@@ -53,43 +53,8 @@ plot(f1, xvar="lambda", label=TRUE)
 freq.lasso.results <- as.data.frame(table(lasso.results))
 freq.lasso.results<-freq.lasso.results[-1,]
 write.csv(freq.lasso.results,"matrix3q7lasso.csv")
-####################################################################
-###3 feature selection by random forest
-library(varSelRF)
-facy <- factor(matrix3t.train[,1])
-x <- matrix3t.train[,-1]
-step=varSelRF(x, facy, c.sd = 1, mtryFactor = 1, ntree = 500,
-              ntreeIterat = 500, vars.drop.num = NULL, vars.drop.frac = 0.1,
-              whole.range = TRUE, recompute.var.imp = FALSE, verbose = FALSE,
-              returnFirstForest = TRUE, fitted.rf = NULL, keep.forest = FALSE)
-select.history <- step$selec.history
-selected.vars<-step$selected.vars
-selected.vars2<-as.data.frame(selected.vars)
-write.table(select.history,"20210201select.history.txt", row.names = F, quote = F)
-write.csv(selected.vars2,"2020201RF.csv")
-######################################################################
-###4 combine lasso and random forest
-filter.lasso<-freq.lasso.results[which(freq.lasso.results$Freq>15),]
-filter.lasso<-filter.lasso[,-2]
-lasso<-as.vector(filter.lasso)
-RF<-selected.vars
-library(VennDiagram)
-input<-list(RF, lasso)
-Table<-calculate.overlap(input)
-venn<-venn.diagram(input,NULL, main.cex = 3,
-                   category = c("Random forest","Lasso"),fill = c( "orange","lightgrey"),
-                   cat.col= c("orange","lightgrey"),   imagetype = "tiff",  main.fontfamily="serif") #, filename = "Vennup.tif"
-grid.draw(venn)
-sect<-as.vector(filter.lasso)
-sect[length(sect)+1]<-"tag"
-matrix3t.train3<-matrix3t.train[,sect]
-matrix3t.valid3<-matrix3t.valid[,sect]
-matrix3t3<-matrix3t[,sect]
-colnames(matrix3t.train3)<-gsub("tag","Y",colnames(matrix3t.train3))
-colnames(matrix3t.valid3)<-gsub("tag","Y",colnames(matrix3t.valid3))
-colnames(matrix3t3)<-gsub("tag","Y",colnames(matrix3t3))
 ###################################################################
-###5 SVM diganostic model construction
+###3 SVM diganostic model construction
 set.seed(42)
 library(pROC)
 library(caret)
@@ -126,7 +91,7 @@ train.con
 valid.con 
 testing.con
 ##################################################################
-###6 plot ROC for SVM
+###4 plot ROC for SVM
 z<-gsub("cancer","4",matrix3t.train3$Y) 
 z<-gsub("normal","2",z)   
 q<-gsub("cancer","4",matrix3t.valid3$Y) 
