@@ -104,14 +104,36 @@ roc2<-roc(z,tpred[,1])
 plot.roc(roc2,col="dodgerblue",print.auc =TRUE,print.auc.col = "dodgerblue",add=TRUE)
 roc3<-roc(w,spred[,1])
 plot.roc(roc3,col="darkgreen",print.auc =TRUE,print.auc.col = "darkgreen",add=TRUE)
+#################################################################
+###loading output of LASSO
+lasso9<-read.csv("matrix3q9lasso.csv",header=T)
+lasso8<-read.csv("matrix3q8lasso.csv",header=T)
+lasso7<-read.csv("matrix3q7lasso.csv",header=T)
+lasso9$X<-NULL
+lasso8$X<-NULL
+lasso7$X<-NULL
+lasso9<-lasso9[which(lasso9$Freq>10),]
+lasso8<-lasso8[which(lasso8$Freq>15),]
+lasso7<-lasso7[which(lasso7$Freq>15),]
+library("ggplot2")
+ggplot(lasso7,aes(x= reorder(lasso.results,Freq), y=Freq,fill=Freq)) +   
+geom_bar(stat = "identity") +
+coord_flip()+
+scale_fill_gradient(low = "pink", high = "red")+
+xlab("circRNAs") +
+scale_y_continuous(name="Frequency",expand=c(0,0))+
+theme_classic()
+lasso9$Block<-"Top10"
+lasso8$Block<-"Top1020"
+lasso7$Block<-"Top2030"
+lasso<-rbind(lasso9,lasso8,lasso7)
+matrix3b<-matrix3[as.vector(lasso$lasso.results),]
 library(pheatmap)
-matrixtsne<-matrix3t3
-tg<-gsub("2","normal",matrixtsne$Y) 
-tg<-gsub("4","cancer",tg) 
-anno<-as.data.frame(rownames(matrixtsne),tg)
-anno$Label<-rownames(anno)
-rownames(anno)<-anno$`rownames(matrixtsne)`
-anno$`rownames(matrixtsne)`<-NULL
-matrixtsne$Y<-NULL
-ann_colors = list(Label=c(cancer="tomato",normal="dodgerblue"))
-pheatmap(matrixtsne,scale='column',annotation_row=anno,annotation_colors =ann_colors,cluster_col=T,cluster_row=T,color = colorRampPalette(c("navy","white", "red"))(100),cellwidth=10,cellheight=1,fontsize =1) 
+library(RColorBrewer)
+anno2<-lasso[,c(1,3)]
+rownames(anno2)<-anno2[,1]
+anno2$lasso.results<-NULL
+ann_colors = list(Block=c(Top10=brewer.pal(3,"Set3")[1],Top1020=brewer.pal(3,"Set3")[2],Top2030=brewer.pal(3,"Set3")[3]),Type=c(cancer="tomato",normal="dodgerblue"))
+matrix3b<-as.data.frame(t(matrix3b))
+pheatmap(matrix3b,scale='column',annotation_row=anno,annotation_col=anno2,annotation_colors =ann_colors,cluster_col=T,cluster_row=T,color = colorRampPalette(c("navy","white", "red" ))(100),cellwidth=3,cellheight=1,fontsize =1) 
+write.csv(colnames(matrix3b),"lassotopcircRNA.csv")
