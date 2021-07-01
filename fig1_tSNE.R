@@ -11,7 +11,7 @@ matrix3q6<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=2&rowSums(as.matrix(mat
 matrix3q7<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=4&rowSums(as.matrix(matrix3)> 0)<7),]
 matrix3q8<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=7&rowSums(as.matrix(matrix3)> 0)<20),]
 matrix3q9<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=20),]
-dat<-matrix3q9 #according to which quantile to be investigated
+dat<-matrix3q9 #according to which range is to be analyzed
 ###############################################################
 ###t-SNE
 library(Rtsne)
