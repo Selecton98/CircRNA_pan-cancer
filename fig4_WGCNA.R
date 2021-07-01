@@ -13,7 +13,7 @@ matrix3q8<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=7&rowSums(as.matrix(mat
 matrix3q9<-matrix3[which(rowSums(as.matrix(matrix3)> 0)>=20),]
 dat<-matrix3q9 #according to which quantile to be investigated
 ############################################################
-###WGCNA
+###WGCNA co-expression analysis
 library(WGCNA)
 library(reshape2)
 library(stringr)
@@ -131,3 +131,40 @@ labeledHeatmap(Matrix = modTraitCor, xLabels = colnames(datTraits),
                cex.text = 0.3, zlim = c(-1,1),
                main = paste("Module-trait relationships"))
 dev.off()
+#################################################
+###loading output of WGCNA
+node3q7<-read.table("./matrix3q7/nodes.txt",sep="\t",header=T)
+node3q8<-read.table("./matrix3q8/nodes.txt",sep="\t",header=T)
+node3q9<-read.table("./matrix3q9/nodes.txt",sep="\t",header=T)
+node3q9orangered3<-node3q9[which(node3q9$nodeAttr.nodesPresent...=="orangered3"),]
+node3q9firebrick4<-node3q9[which(node3q9$nodeAttr.nodesPresent...=="firebrick4"),]
+node3q9salmon2<-node3q9[which(node3q9$nodeAttr.nodesPresent...=="salmon2"),]
+node3q8coral4<-node3q8[which(node3q8$nodeAttr.nodesPresent...=="coral4"),]
+node3q8sienna2<-node3q8[which(node3q8$nodeAttr.nodesPresent...=="sienna2"),]
+node3q8darkolivegreen2<-node3q8[which(node3q8$nodeAttr.nodesPresent...=="darkolivegreen2"),]
+node3q7whitesmoke<-node3q7[which(node3q7$nodeAttr.nodesPresent...=="whitesmoke"),]
+node3q7deeppink2<-node3q7[which(node3q7$nodeAttr.nodesPresent...=="deeppink2"),]
+orangered3<-colSums(matrix3[node3q9orangered3$nodeName,])
+firebrick4<-colSums(matrix3[node3q9firebrick4$nodeName,])
+salmon2<-colSums(matrix3[node3q9salmon2$nodeName,])
+coral4<-colSums(matrix3[node3q8coral4$nodeName,])
+sienna2<-colSums(matrix3[node3q8sienna2$nodeName,])
+darkolivegreen2<-colSums(matrix3[node3q8darkolivegreen2$nodeName,])
+whitesmoke<-colSums(matrix3[node3q7whitesmoke$nodeName,])
+deeppink2<-colSums(matrix3[node3q7deeppink2$nodeName,])
+metagene<-rbind(orangered3,firebrick4,salmon2,coral4,sienna2,darkolivegreen2,whitesmoke,deeppink2)
+allcircs<-rbind(node3q9orangered3,node3q9firebrick4,node3q9salmon2,node3q8coral4,node3q8sienna2,node3q8darkolivegreen2,node3q7whitesmoke,node3q7deeppink2)
+matrix3a<-matrix3[as.vector(allcircs$nodeName),]
+library(pheatmap)
+Samples<-as.data.frame(colnames(matrix3a))
+colnames(Samples)<-"Samples"
+meta5<-merge(Samples,meta4,all=F)
+anno<-meta5
+rownames(anno)<-anno$Samples
+anno$Samples<-NULL
+anno2<-allcircs[,c(1,3)]
+rownames(anno2)<-anno2[,1]
+anno2$nodeName<-NULL
+ann_colors = list(nodeAttr.nodesPresent...=c(orangered3="orangered3",firebrick4="firebrick4",salmon2="salmon2",coral4="coral4",sienna2="sienna2",darkolivegreen2="darkolivegreen2",whitesmoke="lightgrey",deeppink2="deeppink2"),Type=c(cancer="tomato",normal="dodgerblue"))
+matrix3a<-as.data.frame(t(matrix3a))
+pheatmap(matrix3a,scale='column',annotation_row=anno,annotation_col=anno2,annotation_colors =ann_colors,cluster_col=T,cluster_row=T,color = colorRampPalette(c("navy","white", "red" ))(100),cellwidth=3,cellheight=1,fontsize =1) 
