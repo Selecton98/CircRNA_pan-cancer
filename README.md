@@ -1,4 +1,5 @@
 # CircRNA_pan-cancer
+Data and codes for article entitled 'Machine Learning-based Comparative Analysis of Pan-cancer and Pan-normal Tissues Identifies Pan-cancer Tissue-enriched circRNA Associated with Cancer Mutation as Potential Exosomal Biomarker'.
 R version 3.6.0 (2019-04-26)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows >= 8 x64 (build 9200)
